@@ -214,6 +214,3 @@ class ProxyFetcher(object):
 <a href ="https://hy.yunhaoka.com/#/pages/micro_store/index?agent_id=00fa48ad87cedd71b967e505d8255dd7"><img src="https://dlink.host/1drv/aHR0cHM6Ly8xZHJ2Lm1zL2kvYy83ZjRlNDlmOGFhMzc4ZTM3L0VTYXpzXy1SaUtwRmh3MDAzVWY3YV9nQncxZDFBNWJCblA0UEtIbWRPMXhlRGc_ZT1hMlhMQXc" height = "400"> ></a>
 
 
-## ⭐ Stars 趋势
-
-[![Star History Chart](https://api.star-history.com/svg?repos=jin-ting2520/proxy_pool_new&type=Date)](https://star-history.com/#jin-ting2520/proxy_pool_new&Date)
