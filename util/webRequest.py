@@ -26,9 +26,13 @@ requests.packages.urllib3.disable_warnings()
 class WebRequest(object):
     name = "web_request"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, setSessionUrl = None, *args, **kwargs):
         self.log = LogHandler(self.name, file=False)
         self.response = Response()
+        if setSessionUrl:
+            self.session = requests.Session()
+            # 第一次请求，服务器返回 Set-Cookie
+            self.response = self.session.get(setSessionUrl, timeout=5, *args, **kwargs)
 
     @property
     def user_agent(self):
@@ -83,6 +87,45 @@ class WebRequest(object):
             try:
                 self.response = requests.get(url, headers=headers, timeout=timeout, *args, **kwargs)
                 return self
+            except Exception as e:
+                self.log.error("requests: %s error: %s" % (url, str(e)))
+                retry_time -= 1
+                if retry_time <= 0:
+                    resp = Response()
+                    resp.status_code = 200
+                    return self
+                self.log.info("retry %s second after" % retry_interval)
+                time.sleep(retry_interval)
+
+    # 需请求多个链接，复合使用：request = WebRequest(url)
+    #                     request = request.session(url, header, timeout)
+    # 只请求单个链接，WebRequest().get(url, header, timeout)
+    def Session(self, url, header=None, retry_time=3, retry_interval=5, timeout=5, *args, **kwargs):
+        """
+        get method
+        :param url: target url
+        :param header: headers
+        :param retry_time: retry time
+        :param retry_interval: retry interval
+        :param timeout: network timeout
+        :return:
+        """
+        headers = self.header
+        if header and isinstance(header, dict):
+            headers.update(header)
+        while True:
+            try:
+                if self.session:
+                    # 携带数据
+                    self.response = self.session.get(url, timeout=timeout, *args, **kwargs)
+                    return self
+                else:
+                    session = requests.Session()
+                    # 第一次请求，服务器返回 Set-Cookie
+                    session.get(url, headers=headers, timeout=timeout, *args, **kwargs)
+                    # 携带数据
+                    self.response = session.get(url, timeout=timeout, *args, **kwargs)
+                    return self
             except Exception as e:
                 self.log.error("requests: %s error: %s" % (url, str(e)))
                 retry_time -= 1

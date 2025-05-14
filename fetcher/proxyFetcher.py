@@ -51,7 +51,7 @@ class ProxyFetcher(object):
             yield proxy
 
     @staticmethod
-    def freeProxy03(page_count=1):
+    def freeProxy03(page_count=8):
         """ 快代理 https://www.kuaidaili.com """
         url_pattern = [
             'https://www.kuaidaili.com/free/inha/{}/',
@@ -166,6 +166,35 @@ class ProxyFetcher(object):
             sleep(5)
 
     @staticmethod
+    def freeProxy11():
+        """ 小幻HTTP代理 """
+        url = 'https://ip.ihuan.me/today.html'
+        request = WebRequest(url)
+        html_tree = request.Session(url, timeout=10).tree
+        href = html_tree.xpath("/html/body//div[2]/div/div/div[1]/a/@href")[0]
+        sleep(2)
+        href_text = request.Session('https://ip.ihuan.me' + href, timeout=10).text
+        matches = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+', href_text)
+        for proxy in matches:
+            yield proxy
+
+    @staticmethod
+    def freeProxy12(page_count = 5):
+        """ 89免费代理 """
+        url = 'https://www.89ip.cn/'
+        request = WebRequest(url)
+
+        for i in range(1, page_count + 1):
+            url = 'https://www.89ip.cn/{}'.format("" if i == 1 else ('index_{}.html'.format(i)))
+            html_tree = request.Session(url, timeout=10).tree
+            for tr in html_tree.xpath("//table//tr"):
+                ip = "".join(tr.xpath("./td[1]/text()")).strip()
+                port = "".join(tr.xpath("./td[2]/text()")).strip()
+                if ip and port:
+                    yield "%s:%s" % (ip, port)
+            sleep(3)
+
+    @staticmethod
     def customProxy01():
         urls = [
             'https://raw.githubusercontent.com/fyvri/fresh-proxy-list/archive/storage/classic/http.txt',
@@ -191,5 +220,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy10():
+    for _ in p.freeProxy12(1):
         print(_)
