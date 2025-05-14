@@ -212,8 +212,8 @@ class ProxyFetcher(object):
 ### 优惠流量卡
 <a href ="https://h5.lot-ml.com/ProductEn/Index/b7e168241f1ef901"><img src="https://goo.su/evqmR55" height = "400"> ></a>
 <a href ="https://hy.yunhaoka.com/#/pages/micro_store/index?agent_id=00fa48ad87cedd71b967e505d8255dd7"><img src="https://goo.su/P1Fn3z" height = "400"> ></a>
- 
 
-## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jin-ting2520/proxy_pool_new.git&type=Date)](https://www.star-history.com/#jin-ting2520/proxy_pool_new.git&Date)
+## ⭐ Stars 趋势
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jin-ting2520/proxy_pool_new&type=Date)](https://star-history.com/#jin-ting2520/proxy_pool_new&Date)
