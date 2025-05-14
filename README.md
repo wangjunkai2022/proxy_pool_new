@@ -4,7 +4,10 @@ ProxyPool 爬虫代理IP池 优化增强
 
 ### ProxyPool
 
-[原作者项目地址](https://github.com/jhao104/proxy_pool) 感谢jhao104之前项目贡献，因原项目停更，根据自己需求修改了下
+[原作者项目地址](https://github.com/jhao104/proxy_pool) 感谢jhao104之前项目贡献，因原项目停更，根据自己需求修改了下  
+
+演示站：https://vps.122520.xyz   
+仅供展示，请勿进行实际测试
 
 修复：  
 &emsp;&emsp;1、去除imp依赖报错  
