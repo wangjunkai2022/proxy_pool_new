@@ -30,11 +30,33 @@ ProxyPool 爬虫代理IP池 优化增强
 &emsp;&emsp;12、ProxyValidator代理测试时采用随机user_agent  
 &emsp;&emsp;13、实现socks4/socks5代理的抓取和检测  
 &emsp;&emsp;14、将docker内项目根目录挂载到宿主机  
+&emsp;&emsp;15、count方法修改，新增爬取全部代理数和有效率  
 
 ```
 结果示例
 /count
-{"count":613,"proxy_type":{"http":564,"socks4":92,"socks5":83},"source":{"customProxy01":607,"freeProxy02":121,"freeProxy04":25,"freeProxy05":65,"freeProxy07":5,"freeProxy08":6,"freeProxy09":20}}
+{
+  "count": "2931/248238 有效率：1.18%",
+  "proxy_type": {
+    "http": 2025,
+    "socks4": 1185,
+    "socks5": 1299
+  },
+  "source": {
+    "customProxy01": "2923/245099 有效率：1.19%",
+    "freeProxy02": "167/300 有效率：55.67%",
+    "freeProxy03": "7/216 有效率：3.24%",
+    "freeProxy04": "28/50 有效率：56.00%",
+    "freeProxy05": "83/126 有效率：65.87%",
+    "freeProxy07": "19/300 有效率：6.33%",
+    "freeProxy08": "15/0 有效率：0.00%",
+    "freeProxy09": "32/90 有效率：35.56%",
+    "freeProxy10": "1/280 有效率：0.36%",
+    "freeProxy11": "2/1273 有效率：0.16%",
+    "freeProxy12": "2/175 有效率：1.14%"
+  }
+}
+
 
 /get
 {

@@ -17,6 +17,7 @@
 """
 __author__ = 'JHao'
 
+import json
 import platform
 from typing import Counter
 
@@ -150,20 +151,52 @@ def cleardb():
 @app.route('/count/')
 def getCount():
     proxies = proxy_handler.getAll()
-    proxy_type_counter = Counter()
-    source_counter = Counter()
-    for proxy in proxies:
-        # 直接访问属性 proxy.proxy_type
-        for ptype in getattr(proxy, "proxy_type", []):
-            proxy_type_counter[ptype] += 1
-        # 直接访问 proxy.source
-        for src in getattr(proxy, "source", "").split("/"):
-            if src:
-                source_counter[src] += 1
+    raw = proxy_handler.getProxyCount()
+    if raw is None:
+        # 没有任何数据
+        proxy_count_data = {}
+    elif isinstance(raw, dict):
+        # 已经是 dict，直接用
+        proxy_count_data = raw
+    elif isinstance(raw, (str, bytes, bytearray)):
+        # 字符串或字节，尝试 json 解析
+        try:
+            proxy_count_data = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            proxy_count_data = {}
+    else:
+        # 其他类型，一律丢弃
+        proxy_count_data = {}
+    total_proxies = proxy_count_data.get('total', 0)
+
+    proxy_type_counter = Counter(
+        ptype
+        for proxy in proxies
+        for ptype in getattr(proxy, 'proxy_type', [])
+    )
+    source_list = [
+        src
+        for proxy in proxies
+        for src in getattr(proxy, 'source', '').split('/')
+        if src
+    ]
+    source_counter = Counter(source_list)
+
+    def format_rate(count, total):
+        rate = (count / total * 100) if total else 0
+        return f"{count}/{total} 有效率：{rate:.2f}%"
+
+    source_stats = {
+        source: format_rate(count, proxy_count_data.get(source, 0))
+        for source, count in source_counter.items()
+    }
+    total_count = len(proxies)
+    total_stat = format_rate(total_count, total_proxies)
+
     return {
         "proxy_type": dict(proxy_type_counter),
-        "source": dict(source_counter),
-        "count": len(proxies)
+        "source": source_stats,
+        "count": total_stat
     }
 
 

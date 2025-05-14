@@ -118,3 +118,9 @@ class DbClient(withMetaclass(Singleton)):
 
     def test(self):
         return self.client.test()
+
+    def putTotalProxyCount(self, proxyCount: dict):
+        return self.client.putTotalProxyCount(proxyCount)
+
+    def getProxyCount(self):
+        return self.client.getProxyCount()

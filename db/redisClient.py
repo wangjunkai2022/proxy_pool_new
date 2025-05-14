@@ -202,4 +202,9 @@ class RedisClient(object):
             log.error('redis connection error: %s' % str(e), exc_info=True)
             return e
 
+    def putTotalProxyCount(self, proxyCount: dict):
+        data = self.__conn.set('proxyCount', json.dumps(proxyCount))
+        return data
 
+    def getProxyCount(self):
+        return self.__conn.get('proxyCount')

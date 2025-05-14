@@ -12,7 +12,10 @@
 """
 __author__ = 'JHao'
 
+from collections import Counter
 from threading import Thread
+
+from api.proxyApi import proxy_handler
 from helper.proxy import Proxy
 from helper.check import DoValidator
 from handler.logHandler import LogHandler
@@ -23,7 +26,7 @@ from handler.configHandler import ConfigHandler
 
 class _ThreadFetcher(Thread):
 
-    def __init__(self, fetch_source, proxy_dict):
+    def __init__(self, fetch_source, proxy_dict, proxy_total):
         Thread.__init__(self)
         self.fetch_source = fetch_source
         self.proxy_dict = proxy_dict
@@ -31,12 +34,15 @@ class _ThreadFetcher(Thread):
         self.log = LogHandler("fetcher")
         self.conf = ConfigHandler()
         self.proxy_handler = ProxyHandler()
+        self.proxy_total = proxy_total
 
     def run(self):
         self.log.info("ProxyFetch - {func}: start".format(func=self.fetch_source))
         try:
             for proxy in self.fetcher():
                 self.log.info('ProxyFetch - %s: %s ok' % (self.fetch_source, proxy.ljust(23)))
+                self.proxy_total['total'] += 1
+                self.proxy_total[self.fetch_source] += 1
                 proxy = proxy.strip()
                 if proxy in self.proxy_dict:
                     self.proxy_dict[proxy].add_source(self.fetch_source)
@@ -61,6 +67,7 @@ class Fetcher(object):
         :return:
         """
         proxy_dict = dict()
+        proxy_total = Counter()
         thread_list = list()
         self.log.info("ProxyFetch : start")
 
@@ -73,7 +80,7 @@ class Fetcher(object):
             if not callable(fetcher):
                 self.log.error("ProxyFetch - {func}: must be class method".format(func=fetch_source))
                 continue
-            thread_list.append(_ThreadFetcher(fetch_source, proxy_dict))
+            thread_list.append(_ThreadFetcher(fetch_source, proxy_dict, proxy_total))
 
         for thread in thread_list:
             thread.setDaemon(True)
@@ -81,6 +88,9 @@ class Fetcher(object):
 
         for thread in thread_list:
             thread.join()
+
+        self.log.info("ProxyFetch - save total fetch proxy count")
+        proxy_handler.db.putTotalProxyCount(dict(proxy_total))
 
         self.log.info("ProxyFetch - all complete!")
         for _ in proxy_dict.values():

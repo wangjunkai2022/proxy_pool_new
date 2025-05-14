@@ -94,3 +94,9 @@ class ProxyHandler(object):
         """
         total_use_proxy = self.db.getCount()
         return {'count': total_use_proxy}
+
+    def putTotalProxyCount(self, proxyCount):
+        self.db.put(proxyCount)
+
+    def getProxyCount(self):
+        return self.db.getProxyCount()
