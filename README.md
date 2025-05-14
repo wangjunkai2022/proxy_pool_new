@@ -48,8 +48,10 @@ ProxyPool 爬虫代理IP池 优化增强
 }
 ```
 
-### 运行项目
+## 运行项目
 最好使用最新版本python，其他版本没有测试过
+
+### 源代码运行 <br/><br/>
 ##### 下载代码:
 
 * git clone
@@ -100,20 +102,23 @@ python proxyPool.py schedule
 python proxyPool.py server
 
 ```
+<br/>
 
-### Docker Image
+### Docker 运行
 
 ```
-#必须拉取源代码
+# 必须拉取源代码
 git clone https://github.com/jin-ting2520/proxy_pool_new.git
+# 启动之前注意修改setting.py文件中的代理配置以及下方命令中redis的password
 docker run -v $PWD/proxy-pool-new:/proxy-pool-new --env DB_CONN=redis://:password@172.17.0.1:6379/0 -p 5010:5010 --name proxy_pool_new ywtm/proxy_pool_new:latest
 ```
-### docker-compose
+### docker-compose 运行
 
 项目目录下运行: 
 ```
 git clone https://github.com/jin-ting2520/proxy_pool_new.git
 cd proxy_pool_new
+# 启动之前注意修改setting.py文件中的代理配置
 docker-compose up -d
 ```
 
