@@ -86,6 +86,7 @@ def httpsTimeOutValidator(proxy):
         r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
         return True if r.status_code == 200 else False
     except Exception as e:
+        print(f"httpsTimeOutValidator: {str(e)}")
         return False
 
 @ProxyValidator.addSocks4Validator
@@ -96,7 +97,6 @@ def socks4TimeOutValidator(proxy):
         r = head(conf.httpUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
         return True if r.status_code == 200 else False
     except Exception as e:
-        print(f"socks4TimeOutValidator: {str(e)}")
         return False
 
 @ProxyValidator.addSocks5Validator
@@ -107,7 +107,6 @@ def socks5TimeOutValidator(proxy):
         r = head(conf.httpUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
         return True if r.status_code == 200 else False
     except Exception as e:
-        print(f"socks5TimeOutValidator: {str(e)}")
         return False
 
 @ProxyValidator.addHttpValidator
