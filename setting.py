@@ -46,7 +46,7 @@ TABLE_NAME = 'use_proxy'
 # 代理验证目标网站
 HTTP_URL = "http://httpbin.org/ip"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "https://httpbin.org/ip"
 
 # 抓取代理时使用的代理是否使用代理
 USE_PROXY = True
