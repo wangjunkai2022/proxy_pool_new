@@ -1,0 +1,211 @@
+
+ProxyPool 爬虫代理IP池 优化增强
+=======
+
+### ProxyPool
+
+[原作者项目地址](https://github.com/jhao104/proxy_pool) 感谢jhao104之前项目贡献，因原项目停更，根据自己需求修改了下
+
+修复：  
+&emsp;&emsp;1、去除imp依赖报错  
+&emsp;&emsp;2、代理地区获取失败  
+&emsp;&emsp;3、ProxyValidator中httpTimeOutValidator、httpsTimeOutValidator代理使用错误  
+&emsp;&emsp;4、docker运行时报错，sh: can't open 'start.sh': No such file or directory
+
+新增：  
+&emsp;&emsp;1、随机user_agents列表更新   
+&emsp;&emsp;2、代理源更新，部分代理源需要外网或代理访问   
+&emsp;&emsp;3、PROXY_FETCHER列表自动加载，不再需要手动新增，会扫描proxyFetcher.py中的所有方法，所以不用的注释掉   
+&emsp;&emsp;4、重构getCount方法    
+&emsp;&emsp;5、get、pop、all新增返回ip:port列表，对应gettxt、poptxt、alltxt    
+&emsp;&emsp;6、get、pop、all、gettxt、poptxt、alltxt新增查询参数，更便捷    
+&emsp;&emsp;7、获取http代理的匿名级别  
+&emsp;&emsp;8、抓取代理时新增代理选项(setting.py配置)，适合国内用户拉取国外网站  
+&emsp;&emsp;9、新增日志文件配置(setting.py配置)，适合机器硬盘小的用户，可只输出到控制台，不输出到文件  
+&emsp;&emsp;10、新增proxy_type字段，用于标识该代理的类型，去除https字段  
+&emsp;&emsp;11、ProxyValidator代理测试时采用随机user_agent  
+&emsp;&emsp;12、实现socks4/socks5代理的抓取和检测  
+&emsp;&emsp;13、将docker内项目根目录挂载到宿主机  
+
+```
+结果示例
+/count
+{"count":613,"proxy_type":{"http":564,"socks4":92,"socks5":83},"source":{"customProxy01":607,"freeProxy02":121,"freeProxy04":25,"freeProxy05":65,"freeProxy07":5,"freeProxy08":6,"freeProxy09":20}}
+
+/get
+{
+  "anonymous": 2,
+  "check_count": 1,
+  "fail_count": 0,
+  "last_status": true,
+  "last_time": "2025-05-14 05:01:07",
+  "proxy": "123.154.30.68:8085",
+  "proxy_type": [
+    "http"
+  ],
+  "region": "浙江省温州市 联通",
+  "source": "customProxy01"
+}
+```
+
+### 运行项目
+最好使用最新版本python，其他版本没有测试过
+##### 下载代码:
+
+* git clone
+
+```bash
+git clone https://github.com/jin-ting2520/proxy_pool_new.git
+```
+
+##### 安装依赖:
+
+```bash
+pip install -r requirements.txt
+```
+
+##### 更新配置:
+
+```python
+# setting.py 为项目配置文件
+
+# 配置API服务
+
+HOST = "0.0.0.0"               # IP
+PORT = 5000                    # 监听端口
+
+# 配置数据库
+
+DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
+
+# 抓取代理时使用的代理是否使用代理
+USE_PROXY = True
+# 抓取代理时使用的代理
+PROXIES = {'http': "http://127.0.0.1:7897",
+           'https': "http://127.0.0.1:7897"}
+
+# 是否将日志输出到文件
+INPUT_LOG_FILE = False
+# 日志文件保存日期
+LOG_FILE_SAVE_DATE = 5
+```
+
+#### 启动项目:
+
+```bash
+# 启动调度程序
+python proxyPool.py schedule
+
+# 启动webApi服务
+python proxyPool.py server
+
+```
+
+### Docker Image
+
+```
+#必须拉取源代码
+git clone https://github.com/jin-ting2520/proxy_pool_new.git
+docker run -v $PWD/proxy-pool-new:/proxy-pool-new --env DB_CONN=redis://:password@172.17.0.1:6379/0 -p 5010:5010 --name proxy_pool_new ywtm/proxy_pool_new:latest
+```
+### docker-compose
+
+项目目录下运行: 
+```
+git clone https://github.com/jin-ting2520/proxy_pool_new.git
+cd proxy_pool_new
+docker-compose up -d
+```
+
+### 使用
+
+* Api
+
+启动web服务后, 默认配置下会开启 http://127.0.0.1:5010 的api接口服务:
+
+| api      | method | Description         | params                           |
+|----------| ---- |---------------------|----------------------------------|
+| /        | GET | api介绍               | None                             |
+| /get     | GET | 随机获取一个代理            | 可选参数: 见下表                        |
+| /gettxt  | GET | 随机获取一个代理,ip:port格式  | 可选参数: 见下表 |
+| /pop     | GET | 获取并删除一个代理           | 可选参数: 见下表 |
+| /poptxt  | GET | 获取并删除一个代理,ip:port格式 | 可选参数: 见下表 |
+| /all     | GET | 获取所有代理              | 可选参数: 见下表 |
+| /alltxt  | GET | 获取所有代理,ip:port格式    | 可选参数: 见下表 |
+| /count   | GET | 查看代理数量              | None                             |
+| /delete  | GET | 删除代理                | `?proxy=host:ip`                 |
+| /cleardb | GET | 清空代理                | None                  |
+
+* 查询可选参数  
+
+| 参数名     | 参数可选值                       | 说明           |
+|---------|-----------------------------|--------------|
+| type    | http, https, socks4, socks5 | 获取代理类型       |
+| region | 目前只支持中文 e.g. 香港 | 代理地区         |
+| anonymous    | 0，1，2   | HTTP代理匿名级别(0（透明代理），1（匿名代理），2（高匿代理）) |
+* 爬虫使用  
+
+　　如果要在爬虫代码中使用的话， 可以将此api封装成函数直接使用，例如：  
+```python
+import requests
+
+def get_proxy():
+    return requests.get("http://127.0.0.1:5010/get/").json()
+
+def delete_proxy(proxy):
+    requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
+
+# your spider code
+
+def getHtml():
+    # ....
+    retry_count = 5
+    proxy = get_proxy().get("proxy")
+    while retry_count > 0:
+        try:
+            html = requests.get('http://www.example.com', proxies={"http": "http://{}".format(proxy)})
+            # 使用代理访问
+            return html
+        except Exception:
+            retry_count -= 1
+    # 删除代理池中代理
+    delete_proxy(proxy)
+    return None
+```
+
+### 扩展代理
+
+　　项目默认包含几个免费的代理获取源，但是免费的毕竟质量有限，所以如果直接运行可能拿到的代理质量不理想。所以，提供了代理获取的扩展方法。
+
+　　添加一个新的代理源方法如下:
+
+* 1、首先在[ProxyFetcher](fetcher/proxyFetcher.py)类中添加自定义的获取代理的静态方法，
+该方法需要以生成器(yield)形式返回`host:ip`格式的代理，例如:
+
+```python
+
+class ProxyFetcher(object):
+    # ....
+
+    # 自定义代理源获取方法
+    @staticmethod
+    def freeProxyCustom1():  # 命名不和已有重复即可
+
+        # 通过某网站或者某接口或某数据库获取代理
+        # 假设你已经拿到了一个代理列表
+        proxies = ["x.x.x.x:3128", "x.x.x.x:80"]
+        for proxy in proxies:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+```
+
+* 2、添加好方法后，会自动加载，无需配置。  
+　`schedule` 进程会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+
+<br/> 
+
+### 优惠流量卡
+<a href ="https://h5.lot-ml.com/ProductEn/Index/b7e168241f1ef901"><img src="https://goo.su/evqmR55" height = "400"> ></a>
+<a href ="https://hy.yunhaoka.com/#/pages/micro_store/index?agent_id=00fa48ad87cedd71b967e505d8255dd7"><img src="https://goo.su/P1Fn3z" height = "400"> ></a>
+ 
+

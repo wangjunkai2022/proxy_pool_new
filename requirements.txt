@@ -1,0 +1,9 @@
+requests
+requests[socks]
+gunicorn
+lxml
+redis
+apscheduler
+click
+Flask
+werkzeug
