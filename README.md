@@ -210,8 +210,8 @@ class ProxyFetcher(object):
 <br/> 
 
 ### 优惠流量卡
-<a href ="https://h5.lot-ml.com/ProductEn/Index/b7e168241f1ef901"><img src="https://goo.su/evqmR55" height = "400"> ></a>
-<a href ="https://hy.yunhaoka.com/#/pages/micro_store/index?agent_id=00fa48ad87cedd71b967e505d8255dd7"><img src="https://goo.su/P1Fn3z" height = "400"> ></a>
+<a href ="https://h5.lot-ml.com/ProductEn/Index/b7e168241f1ef901"><img src="https://dlink.host/1drv/aHR0cHM6Ly8xZHJ2Lm1zL2kvYy83ZjRlNDlmOGFhMzc4ZTM3L0VZalVkY2NsZEpCSWlWMklUbkNNWWtvQmtsNHA4SDV5Q1JRNDhDaEZ0aktoRGc_ZT1UNXFOY0s" height = "400"> ></a>
+<a href ="https://hy.yunhaoka.com/#/pages/micro_store/index?agent_id=00fa48ad87cedd71b967e505d8255dd7"><img src="https://dlink.host/1drv/aHR0cHM6Ly8xZHJ2Lm1zL2kvYy83ZjRlNDlmOGFhMzc4ZTM3L0VTYXpzXy1SaUtwRmh3MDAzVWY3YV9nQncxZDFBNWJCblA0UEtIbWRPMXhlRGc_ZT1hMlhMQXc" height = "400"> ></a>
 
 
 ## ⭐ Stars 趋势
