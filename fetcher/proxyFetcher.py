@@ -98,6 +98,7 @@ class ProxyFetcher(object):
             proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
             for proxy in proxies:
                 yield base64.b64decode(proxy).decode()
+            sleep(2)
 
     @staticmethod
     def freeProxy06(page_count=3):
@@ -121,6 +122,7 @@ class ProxyFetcher(object):
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
+            sleep(2)
 
     @staticmethod
     def freeProxy07(page_count=3):
@@ -142,6 +144,7 @@ class ProxyFetcher(object):
                 port = "".join(tr.xpath("./td[2]/a/text()")).strip()
                 if ip and port:
                     yield "%s:%s" % (ip, port)
+            sleep(2)
 
     @staticmethod
     def freeProxy09(page_count = 3):
@@ -196,6 +199,9 @@ class ProxyFetcher(object):
 
     @staticmethod
     def customProxy01():
+        """
+        返回格式为 ip:port
+        """
         urls = [
             'https://raw.githubusercontent.com/fyvri/fresh-proxy-list/archive/storage/classic/http.txt',
             'https://raw.githubusercontent.com/fyvri/fresh-proxy-list/archive/storage/classic/https.txt',
@@ -209,13 +215,17 @@ class ProxyFetcher(object):
             'https://www.proxy-list.download/api/v1/get?type=socks5',
             'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=5000&country=all&ssl=all&anonymity=all',
             'https://api.proxyscrape.com/?request=getproxies&proxytype=socks4&timeout=5000&country=all',
-            'https://api.proxyscrape.com/?request=getproxies&proxytype=socks5&timeout=5000&country=all'
+            'https://api.proxyscrape.com/?request=getproxies&proxytype=socks5&timeout=5000&country=all',
+            'https://api.openproxylist.xyz/http.txt',
+            'https://api.openproxylist.xyz/socks4.txt',
+            'https://api.openproxylist.xyz/socks5.txt'
         ]
         for url in urls:
             text = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10).text
             matches = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+', text)
             for proxy in matches:
                 yield proxy
+            sleep(2)
 
 
 if __name__ == '__main__':
