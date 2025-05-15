@@ -21,24 +21,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 3、生成镜像元数据（标签、构建上下文等）
-      - name: Extract image metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          # 一定要写完整 registry 路径
-          images: docker.io/ywtm/proxy_pool_new
-          # 让它对 main 分支固定打 latest
-          tags: |
-            type=ref,event=latest,pattern=main,value=latest
-
-      # 4、构建并推送
-      - name: Build and push Docker image
+      # 3、构建并推送
+      - name: Build and push Docker image as :latest
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          # 从上一步拿到的标签输出
-          tags: ${{ steps.meta.outputs.tags }}
+          # 直接把 latest 写死
+          tags: |
+            docker.io/ywtm/proxy_pool_new:latest
           # (可选) 如果你需要多平台构建：
           # platforms: linux/amd64,linux/arm64
