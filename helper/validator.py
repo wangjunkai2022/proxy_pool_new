@@ -80,8 +80,12 @@ def httpTimeOutValidator(proxy):
 
 @ProxyValidator.addHttpsValidator
 def httpsTimeOutValidator(proxy):
-    """https检测超时"""
-    proxies = {"http": "https://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    """
+    https检测超时
+    对于测试一个普通代理是否能访问HTTPS网站，你应该告诉requests当目标是HTTPS时使用http://{proxy}这个代理地址去连接代理地址本身是通过HTTP访问的）。
+    (proxies = {"http": "https://{proxy}", "https": "https://{proxy}"})告诉requests当目标是HTTPS时，尝试通过HTTPS协议去连接你的代理服务器，这与大多数代理服务器的工作方式不符，很可能会失败。
+    """
+    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "http://{proxy}".format(proxy=proxy)}
     try:
         r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
         return True if r.status_code == 200 else False
