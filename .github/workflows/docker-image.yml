@@ -30,7 +30,7 @@ jobs:
           images: docker.io/ywtm/proxy_pool_new
           # 让它对 main 分支固定打 latest
           tags: |
-            type=ref,event=branch,pattern=latest,value=latest
+            type=ref,event=latest,pattern=main,value=latest
 
       # 4、构建并推送
       - name: Build and push Docker image
