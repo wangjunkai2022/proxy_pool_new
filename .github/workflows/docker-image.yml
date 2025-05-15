@@ -1,0 +1,44 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_to_registry:
+    runs-on: ubuntu-latest
+    steps:
+      # 1、检出代码
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2、登录 Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3、生成镜像元数据（标签、构建上下文等）
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # 一定要写完整 registry 路径
+          images: docker.io/ywtm/proxy_pool_new
+          # 让它对 main 分支固定打 latest
+          tags: |
+            type=ref,event=branch,pattern=main,value=latest
+
+      # 4、构建并推送
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          # 从上一步拿到的标签输出
+          tags: ${{ steps.meta.outputs.tags }}
+          # (可选) 如果你需要多平台构建：
+          # platforms: linux/amd64,linux/arm64
