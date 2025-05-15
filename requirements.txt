@@ -7,3 +7,4 @@ apscheduler
 click
 Flask
 werkzeug
+quickjs

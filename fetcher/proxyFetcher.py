@@ -12,14 +12,17 @@
 """
 __author__ = 'JHao'
 
+import base64
 import re
 import json
 from time import sleep
-
+import quickjs
 from handler.configHandler import ConfigHandler
 from util.webRequest import WebRequest
 
 conf = ConfigHandler()
+ctx = quickjs.Context()
+
 
 class ProxyFetcher(object):
     """
@@ -44,7 +47,7 @@ class ProxyFetcher(object):
     def freeProxy02():
         """ FreeProxyList http://free-proxy-list.net"""
         url = 'http://free-proxy-list.net'
-        html_tree = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, verify=False).tree
+        html_tree = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, verify=False).tree
         proxies = html_tree.xpath("//*[@id='raw']/div/div/div[2]/textarea/text()")
         matches = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+', proxies[0])
         for proxy in matches:
@@ -77,7 +80,8 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy04():
         """ 稻壳代理 https://www.docip.net/ """
-        r = WebRequest().get("https://www.docip.net/data/free.json", proxies = conf.proxies if conf.useProxy else None, timeout=10)
+        r = WebRequest().get("https://www.docip.net/data/free.json", proxies=conf.proxies if conf.useProxy else None,
+                             timeout=10)
         try:
             for each in r.json['data']:
                 yield each['ip']
@@ -94,7 +98,7 @@ class ProxyFetcher(object):
         request = WebRequest()
         import base64
         for url in urls:
-            r = request.get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10)
+            r = request.get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10)
             proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
             for proxy in proxies:
                 yield base64.b64decode(proxy).decode()
@@ -118,7 +122,7 @@ class ProxyFetcher(object):
                 url_list.append(pattern.format(page_index))
         request = WebRequest()
         for url in url_list:
-            r = request.get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10)
+            r = request.get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10)
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
@@ -129,7 +133,7 @@ class ProxyFetcher(object):
         for i in range(1, page_count + 1):
             url = 'https://proxylist.geonode.com/api/proxy-list?limit=100&page={}&sort_by=lastChecked&sort_type=desc'.format(
                 i)
-            data = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10).json['data']
+            data = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).json['data']
             for each in data:
                 yield "%s:%s" % (each['ip'], each['port'])
             sleep(5)
@@ -147,20 +151,20 @@ class ProxyFetcher(object):
             sleep(2)
 
     @staticmethod
-    def freeProxy09(page_count = 3):
+    def freeProxy09(page_count=3):
         for i in range(1, page_count + 1):
             url = 'https://freeproxylist.cc/servers/{}.html'.format(i)
-            text = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10).text
+            text = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).text
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', text)
             for proxy in proxies:
                 yield ':'.join(proxy)
             sleep(5)
 
     @staticmethod
-    def freeProxy10(page_count = 8):
+    def freeProxy10(page_count=8):
         for i in range(1, page_count + 1):
             url = 'https://cn.proxy-tools.com/proxy{}'.format("/" if i == 1 else ('?page=' + str(i)))
-            html_tree = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10).tree
+            html_tree = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).tree
             for tr in html_tree.xpath("//table//tr"):
                 ip = "".join(tr.xpath("./td[1]/text()")).strip()
                 port = 80
@@ -182,11 +186,10 @@ class ProxyFetcher(object):
             yield proxy
 
     @staticmethod
-    def freeProxy12(page_count = 5):
+    def freeProxy12(page_count=5):
         """ 89免费代理 """
         url = 'https://www.89ip.cn/'
         request = WebRequest(url)
-
         for i in range(1, page_count + 1):
             url = 'https://www.89ip.cn/{}'.format("" if i == 1 else ('index_{}.html'.format(i)))
             html_tree = request.Session(url, timeout=10).tree
@@ -196,6 +199,80 @@ class ProxyFetcher(object):
                 if ip and port:
                     yield "%s:%s" % (ip, port)
             sleep(3)
+
+    @staticmethod
+    def freeProxy13():
+        """ 齐云代理 """
+        url = 'https://www.qiyunip.com/freeProxy/'
+        html_tree = WebRequest().get(url, timeout=10).tree
+        for tr in html_tree.xpath("//table//tr"):
+            ip = "".join(tr.xpath("./th[1]/text()")).strip()
+            port = "".join(tr.xpath("./th[2]/text()")).strip()
+            if ip and port:
+                yield "%s:%s" % (ip, port)
+
+    @staticmethod
+    def freeProxy14():
+        """ proxy5 """
+        url = 'https://proxy5.net/cn/free-proxy'
+        html_tree = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).tree
+        for tr in html_tree.xpath("//table//tr"):
+            ip = "".join(tr.xpath("./td[1]/strong/text()")).strip()
+            port = "".join(tr.xpath("./td[2]/text()")).strip()
+            if ip and port:
+                yield "%s:%s" % (ip, port)
+
+    @staticmethod
+    def freeProxy15():
+        """ proxynova """
+        def extract_expr(s: str) -> str:
+            start = s.find('(') + 1
+            end = s.rfind(')')
+            if start == 0 or end == -1:
+                raise ValueError("无法在字符串中找到匹配的括号")
+            return s[start:end]
+
+        def decode_atob_in_js(js_code: str) -> str:
+            """
+            将 js_code 中所有 atob("…") 调用替换为对应的解码后字符串，
+            比如 atob("NDcuMjU0LjM=") -> "47.254.3"
+            """
+            # 匹配 atob("…") 并捕获内部的 base64 文本
+            pattern = re.compile(r'atob\("([^"]+)"\)')
+
+            def _repl(m: re.Match) -> str:
+                b64_str = m.group(1)
+                try:
+                    decoded = base64.b64decode(b64_str).decode('utf-8')
+                except Exception:
+                    return m.group(0)
+                return f'"{decoded}"'
+
+            return pattern.sub(_repl, js_code)
+
+        url = 'https://www.proxynova.com/proxy-server-list/'
+        html_tree = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).tree
+        for tr in html_tree.xpath("//*[@id='tbl_proxy_list']/tbody/tr"):
+            js_tree = tr.xpath("./td[1]//script/text()")
+            js_code = extract_expr(js_tree[0])
+            if 'atob(' in js_code:
+                js_code = decode_atob_in_js(js_code)
+            ip = ctx.eval(js_code)
+            port = "".join(tr.xpath("./td[2]/text()")).strip()
+            if ip and port:
+                yield "%s:%s" % (ip, port)
+
+    @staticmethod
+    def freeProxy16(page_count = 2):
+        """ proxydb """
+        url = 'https://proxydb.net/list'
+        for i in range(0, page_count):
+            json = {'protocols': [], 'anonlvls': [], 'offset': i * 30}
+            resp = WebRequest().post(url, json=json, proxies=conf.proxies if conf.useProxy else None, timeout=10).json
+            if "proxies" in resp:
+                proxies = resp["proxies"]
+                for proxy in proxies:
+                    yield "%s:%s" % (proxy['ip'], proxy['port'])
 
     @staticmethod
     def customProxy01():
@@ -221,7 +298,7 @@ class ProxyFetcher(object):
             'https://api.openproxylist.xyz/socks5.txt'
         ]
         for url in urls:
-            text = WebRequest().get(url, proxies = conf.proxies if conf.useProxy else None, timeout=10).text
+            text = WebRequest().get(url, proxies=conf.proxies if conf.useProxy else None, timeout=10).text
             matches = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+', text)
             for proxy in matches:
                 yield proxy
@@ -230,5 +307,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy12(1):
+    for _ in p.freeProxy16():
         print(_)

@@ -30,6 +30,7 @@ ProxyPool 爬虫代理IP池 优化增强
 &emsp;&emsp;13、实现socks4/socks5代理的抓取和检测  
 &emsp;&emsp;14、将docker内项目根目录挂载到宿主机  
 &emsp;&emsp;15、count方法修改，新增爬取全部代理数和有效率  
+&emsp;&emsp;16、引入quickjs模块，使其支持js运算  
 
 ```
 结果示例
