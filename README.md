@@ -36,24 +36,25 @@ ProxyPool 爬虫代理IP池 优化增强
 结果示例
 /count
 {
-  "count": "2931/248238 有效率：1.18%",
+  "count": "2335/297755 有效率：0.78%",
   "proxy_type": {
-    "http": 2025,
-    "socks4": 1185,
-    "socks5": 1299
+    "http": 1564,
+    "https": 167,
+    "socks4": 1219,
+    "socks5": 1279
   },
   "source": {
-    "customProxy01": "2923/245099 有效率：1.19%",
-    "freeProxy02": "167/300 有效率：55.67%",
-    "freeProxy03": "7/216 有效率：3.24%",
-    "freeProxy04": "28/50 有效率：56.00%",
-    "freeProxy05": "83/126 有效率：65.87%",
-    "freeProxy07": "19/300 有效率：6.33%",
-    "freeProxy08": "15/0 有效率：0.00%",
-    "freeProxy09": "32/90 有效率：35.56%",
-    "freeProxy10": "1/280 有效率：0.36%",
-    "freeProxy11": "2/1273 有效率：0.16%",
-    "freeProxy12": "2/175 有效率：1.14%"
+    "customProxy01": "2330/294354 有效率：0.79%",
+    "freeProxy02": "85/300 有效率：28.33%",
+    "freeProxy03": "32/228 有效率：14.04%",
+    "freeProxy04": "17/50 有效率：34.00%",
+    "freeProxy05": "53/126 有效率：42.06%",
+    "freeProxy07": "42/300 有效率：14.00%",
+    "freeProxy08": "7/250 有效率：2.80%",
+    "freeProxy09": "44/90 有效率：48.89%",
+    "freeProxy10": "12/280 有效率：4.29%",
+    "freeProxy11": "10/1273 有效率：0.79%",
+    "freeProxy12": "3/175 有效率：1.71%"
   }
 }
 
@@ -98,10 +99,8 @@ pip install -r requirements.txt
 # setting.py 为项目配置文件
 
 # 配置API服务
-
 HOST = "0.0.0.0"               # IP
 PORT = 5000                    # 监听端口
-
 # 配置数据库
 
 DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
