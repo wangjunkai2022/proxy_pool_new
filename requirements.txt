@@ -1,9 +1,8 @@
-requests
 requests[socks]
 gunicorn
 lxml
 redis
-apscheduler
+APScheduler
 click
 Flask
 werkzeug

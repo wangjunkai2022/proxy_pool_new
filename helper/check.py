@@ -13,9 +13,10 @@
                    2025/5/14: 获取代理匿名信息
                               修复代理Region信息
                               添加socks代理效验
+                   2025/5/16  添加socks代理效验https网站
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = 'jinting'
 
 from requests import RequestException
 
@@ -53,12 +54,22 @@ class DoValidator(object):
             "http": cls.httpValidator(proxy),
             "https": False,
             "socks4": cls.socks4Validator(proxy),
+            "socks4https": False,
             "socks5": cls.socks5Validator(proxy),
+            "socks5https": False
         }
 
         # HTTPS 仅在 HTTP 成功的前提下检查
         if results["http"]:
             results["https"] = cls.httpsValidator(proxy)
+
+        # socks4https 仅在 socks4 成功的前提下检查
+        if results["socks4"]:
+            results["socks4https"] = cls.socks4httpsValidator(proxy)
+
+        # socks5https 仅在 socks5 成功的前提下检查
+        if results["socks5"]:
+            results["socks5https"] = cls.socks5httpsValidator(proxy)
 
         # 初始化属性
         proxy.check_count += 1
@@ -67,7 +78,7 @@ class DoValidator(object):
         proxy.proxy_type = [ptype for ptype, valid in results.items() if valid]
 
         # 匿名性检测
-        if results["http"] or results["https"]:
+        if results["http"]:
             proxy.anonymous = cls.anonymousValidator(proxy.proxy, results["https"])
 
         # 成功或失败计数更新
@@ -101,8 +112,22 @@ class DoValidator(object):
         return True
 
     @classmethod
+    def socks4httpsValidator(cls, proxy):
+        for func in ProxyValidator.socks4https_validator:
+            if not func(proxy.proxy):
+                return False
+        return True
+
+    @classmethod
     def socks5Validator(cls, proxy):
         for func in ProxyValidator.socks5_validator:
+            if not func(proxy.proxy):
+                return False
+        return True
+
+    @classmethod
+    def socks5httpsValidator(cls, proxy):
+        for func in ProxyValidator.socks5https_validator:
             if not func(proxy.proxy):
                 return False
         return True

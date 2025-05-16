@@ -46,13 +46,13 @@ class JsonResponse(Response):
 app.response_class = JsonResponse
 
 api_list = [
-    {"url": "/get", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get a proxy"},
-    {"url": "/gettxt", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get a proxy by txt"},
-    {"url": "/pop", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get and delete a proxy"},
-    {"url": "/poptxt", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get and delete a proxy by txt"},
+    {"url": "/get", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy"},
+    {"url": "/gettxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy by txt"},
+    {"url": "/pop", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy"},
+    {"url": "/poptxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy by txt"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
-    {"url": "/all", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get all proxy from proxy pool"},
-    {"url": "/alltxt", "params": "type: 'http|https|socks4|socks5 单选', region: '代理地区, 中文 e.g. 香港', anonymous: '0，1，2'", "desc": "get all proxy from proxy pool by txt"},
+    {"url": "/all", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool"},
+    {"url": "/alltxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool by txt"},
     {"url": "/count", "params": "", "desc": "return proxy count"}
     # 'refresh': 'refresh proxy pool',
 ]

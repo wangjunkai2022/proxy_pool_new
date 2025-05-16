@@ -8,9 +8,10 @@
 -------------------------------------------------
    Change Activity:
                    2023/03/10: 支持带用户认证的代理格式 username:password@ip:port
+                   2025/5/16  添加socks代理效验，分别效验http、https网站
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = 'jinting'
 
 import re
 from requests import head
@@ -34,7 +35,9 @@ class ProxyValidator(withMetaclass(Singleton)):
     http_validator = []
     https_validator = []
     socks4_validator = []
+    socks4https_validator = []
     socks5_validator = []
+    socks5https_validator = []
 
     @classmethod
     def addPreValidator(cls, func):
@@ -57,10 +60,19 @@ class ProxyValidator(withMetaclass(Singleton)):
         return func
 
     @classmethod
+    def addSocks4httpsValidator(cls, func):
+        cls.socks4https_validator.append(func)
+        return func
+
+    @classmethod
     def addSocks5Validator(cls, func):
         cls.socks5_validator.append(func)
         return func
 
+    @classmethod
+    def addSocks5httpsValidator(cls, func):
+        cls.socks5https_validator.append(func)
+        return func
 
 @ProxyValidator.addPreValidator
 def formatValidator(proxy):
@@ -103,6 +115,16 @@ def socks4TimeOutValidator(proxy):
     except Exception as e:
         return False
 
+@ProxyValidator.addSocks4httpsValidator
+def socks4httpsTimeOutValidator(proxy):
+    """ socks4检测超时 """
+    proxies = {"http": "socks4://{proxy}".format(proxy=proxy), "https": "socks4://{proxy}".format(proxy=proxy)}
+    try:
+        r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
+        return True if r.status_code == 200 else False
+    except Exception as e:
+        return False
+
 @ProxyValidator.addSocks5Validator
 def socks5TimeOutValidator(proxy):
     """ socks5检测超时 """
@@ -112,6 +134,18 @@ def socks5TimeOutValidator(proxy):
         return True if r.status_code == 200 else False
     except Exception as e:
         return False
+
+
+@ProxyValidator.addSocks5httpsValidator
+def socks5httpsTimeOutValidator(proxy):
+    """ socks5检测超时 """
+    proxies = {"http": "socks5://{proxy}".format(proxy=proxy), "https": "socks5://{proxy}".format(proxy=proxy)}
+    try:
+        r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
+        return True if r.status_code == 200 else False
+    except Exception as e:
+        return False
+
 
 @ProxyValidator.addHttpValidator
 def customValidatorExample(proxy):
