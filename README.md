@@ -41,9 +41,9 @@ ProxyPool 爬虫代理IP池 优化增强
     "http": 1833,
     "https": 115,
     "socks4": 1431,
-    "socks4https": 93,
+    "socks4tohttps": 93,
     "socks5": 1101,
-    "socks5https": 96
+    "socks5tohttps": 96
   },
   "source": {
     "customProxy01": "2338/374780 有效率：0.62%",
