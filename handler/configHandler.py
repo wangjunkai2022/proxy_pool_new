@@ -102,6 +102,10 @@ class ConfigHandler(withMetaclass(Singleton)):
     def logFileSaveDate(self):
         return os.getenv("LOG_FILE_SAVE_DATE", setting.LOG_FILE_SAVE_DATE)
 
+    @LazyProperty
+    def fetchInterval(self):
+        return os.getenv("FETCH_INTERVAL", setting.FETCH_INTERVAL)
+
 if __name__ == '__main__':
     config = ConfigHandler()
     print(config.fetchers)

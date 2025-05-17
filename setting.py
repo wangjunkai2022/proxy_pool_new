@@ -53,8 +53,12 @@ USE_PROXY = True
 # 抓取代理时使用的代理
 PROXIES = {'http': "http://127.0.0.1:7897",
            'https': "http://127.0.0.1:7897"}
+
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10
+
+# 代理抓取时间间隔（分钟）
+FETCH_INTERVAL = 480
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
 MAX_FAIL_COUNT = 0
