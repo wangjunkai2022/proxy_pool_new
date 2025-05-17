@@ -14,6 +14,7 @@
                               修复代理Region信息
                               添加socks代理效验
                    2025/5/16  添加socks代理效验https网站
+                   2025/5/18  修改代理检测方法
 -------------------------------------------------
 """
 __author__ = 'jinting'
@@ -52,24 +53,25 @@ class DoValidator(object):
         # 各类型代理校验
         results = {
             "http": cls.httpValidator(proxy),
-            "https": False,
+            "httptohttps": False,
+            "https": cls.httpsValidator(proxy),
             "socks4": cls.socks4Validator(proxy),
-            "socks4https": False,
+            "socks4tohttps": False,
             "socks5": cls.socks5Validator(proxy),
-            "socks5https": False
+            "socks5tohttps": False
         }
 
-        # HTTPS 仅在 HTTP 成功的前提下检查
+        # httptohttps 仅在 http 成功的前提下检查
         if results["http"]:
-            results["https"] = cls.httpsValidator(proxy)
+            results["httptohttps"] = cls.httptohttpsValidator(proxy)
 
-        # socks4https 仅在 socks4 成功的前提下检查
+        # socks4tohttps 仅在 socks4 成功的前提下检查
         if results["socks4"]:
-            results["socks4https"] = cls.socks4httpsValidator(proxy)
+            results["socks4https"] = cls.socks4tohttpsValidator(proxy)
 
-        # socks5https 仅在 socks5 成功的前提下检查
+        # socks5tohttps 仅在 socks5 成功的前提下检查
         if results["socks5"]:
-            results["socks5https"] = cls.socks5httpsValidator(proxy)
+            results["socks5tohttps"] = cls.socks5tohttpsValidator(proxy)
 
         # 初始化属性
         proxy.check_count += 1
@@ -78,7 +80,7 @@ class DoValidator(object):
         proxy.proxy_type = [ptype for ptype, valid in results.items() if valid]
 
         # 匿名性检测
-        if results["http"]:
+        if results["http"] or results["https"]:
             proxy.anonymous = cls.anonymousValidator(proxy.proxy, results["https"])
 
         # 成功或失败计数更新
@@ -98,6 +100,13 @@ class DoValidator(object):
         return True
 
     @classmethod
+    def httptohttpsValidator(cls, proxy):
+        for func in ProxyValidator.httptohttps_validator:
+            if not func(proxy.proxy):
+                return False
+        return True
+
+    @classmethod
     def httpsValidator(cls, proxy):
         for func in ProxyValidator.https_validator:
             if not func(proxy.proxy):
@@ -112,8 +121,8 @@ class DoValidator(object):
         return True
 
     @classmethod
-    def socks4httpsValidator(cls, proxy):
-        for func in ProxyValidator.socks4https_validator:
+    def socks4tohttpsValidator(cls, proxy):
+        for func in ProxyValidator.socks4tohttps_validator:
             if not func(proxy.proxy):
                 return False
         return True
@@ -126,8 +135,8 @@ class DoValidator(object):
         return True
 
     @classmethod
-    def socks5httpsValidator(cls, proxy):
-        for func in ProxyValidator.socks5https_validator:
+    def socks5tohttpsValidator(cls, proxy):
+        for func in ProxyValidator.socks5tohttps_validator:
             if not func(proxy.proxy):
                 return False
         return True

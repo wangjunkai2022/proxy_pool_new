@@ -29,32 +29,38 @@ ProxyPool 爬虫代理IP池 优化增强
 &emsp;&emsp;12、ProxyValidator代理测试时采用随机user_agent  
 &emsp;&emsp;13、实现socks4/socks5代理的抓取和检测  
 &emsp;&emsp;14、将docker内项目根目录挂载到宿主机  
-&emsp;&emsp;15、count方法修改，新增爬取全部代理数和有效率  
+&emsp;&emsp;15、count方法修改，新增爬取全部代理数和存活率  
 &emsp;&emsp;16、引入quickjs模块，使其支持js运算  
 
 ```
 结果示例
 /count
 {
-  "count": "2754/297755 有效率：0.92%",
+  "count": "2411/378242 有效率：0.64%",
   "proxy_type": {
-    "http": 1942,
-    "https": 179,
-    "socks4": 1548,
-    "socks5": 1537
+    "http": 1833,
+    "https": 115,
+    "socks4": 1431,
+    "socks4https": 93,
+    "socks5": 1101,
+    "socks5https": 96
   },
   "source": {
-    "customProxy01": "2682/294354 有效率：0.91%",
-    "freeProxy02": "85/300 有效率：28.33%",
-    "freeProxy03": "41/228 有效率：17.98%",
-    "freeProxy04": "17/50 有效率：34.00%",
-    "freeProxy05": "53/126 有效率：42.06%",
-    "freeProxy07": "43/300 有效率：14.33%",
-    "freeProxy08": "8/250 有效率：3.20%",
-    "freeProxy09": "44/90 有效率：48.89%",
-    "freeProxy10": "15/280 有效率：5.36%",
-    "freeProxy11": "80/1273 有效率：6.28%",
-    "freeProxy12": "3/175 有效率：1.71%"
+    "customProxy01": "2338/374780 有效率：0.62%",
+    "freeProxy02": "98/300 有效率：32.67%",
+    "freeProxy03": "46/228 有效率：20.18%",
+    "freeProxy04": "23/50 有效率：46.00%",
+    "freeProxy05": "58/126 有效率：46.03%",
+    "freeProxy07": "14/300 有效率：4.67%",
+    "freeProxy08": "8/200 有效率：4.00%",
+    "freeProxy09": "34/90 有效率：37.78%",
+    "freeProxy10": "1/280 有效率：0.36%",
+    "freeProxy11": "77/1273 有效率：6.05%",
+    "freeProxy12": "1/175 有效率：0.57%",
+    "freeProxy13": "2/11 有效率：18.18%",
+    "freeProxy14": "20/20 有效率：100.00%",
+    "freeProxy15": "16/20 有效率：80.00%",
+    "freeProxy16": "26/60 有效率：43.33%"
   }
 }
 
@@ -168,11 +174,11 @@ docker-compose up -d
 
 * 查询可选参数  
 
-| 参数名        | 参数可选值                                                 |                          说明                          |
-|--------------|-------------------------------------------------------|:----------------------------------------------------:|
-| type         | http, https, socks4, socks4https, socks5, socks5https | 获取代理类型(socks* 为测试http网站的结果，socks*https为测试https网站的结果) |
-| region       | 目前只支持中文 e.g. 香港    |                         代理地区     |
-| anonymous    | 0，1，2  |         HTTP代理匿名级别(0（透明代理），1（匿名代理），2（高匿代理）)          |  
+| 参数名        | 参数可选值                                                                              | 说明                                                                                                                                                                                                                                        |
+|--------------|------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type         | http, httptohttps,<br/>https, <br/>socks4,socks4tohttps,<br/>socks5, socks5tohttps | 获取代理类型<br/>http: http代理连接http网站<br/>httptohttps: http代理连接https网站<br/>https: https代理连接https网站<br/>socks4: socks4代理连接http网站<br/>socks4tohttps: socks4代理连接https网站<br/>socks5: socks5代理连接http网站<br/>socks5tohttps: socks5代理连接https网站          |
+| region       | 目前只支持中文 e.g. 香港                                                                    | 代理地区                                                                                                                                                                                                                                      |
+| anonymous    | 0，1，2                                                                              | HTTP代理匿名级别<br/>0（透明代理）<br/>1（匿名代理）<br/>2（高匿代理）                                                                                                                                                                                            |  
 
 * 爬虫使用  
 

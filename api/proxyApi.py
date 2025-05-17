@@ -13,9 +13,10 @@
                    2020/06/23: 新增pop接口
                    2022/07/21: 更新count接口
                    2025/05/14: 更新所有接口，支持socks4/5
+                   2025/05/15: 更新所有查询接口type参数
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = 'jinting'
 
 import json
 import platform
@@ -46,13 +47,14 @@ class JsonResponse(Response):
 app.response_class = JsonResponse
 
 api_list = [
-    {"url": "/get", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy"},
-    {"url": "/gettxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy by txt"},
-    {"url": "/pop", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy"},
-    {"url": "/poptxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy by txt"},
+    {"作者github": "https://github.com/jin-ting2520/proxy_pool_new"},
+    {"url": "/get", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy"},
+    {"url": "/gettxt", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get a proxy by txt"},
+    {"url": "/pop", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy"},
+    {"url": "/poptxt", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get and delete a proxy by txt"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
-    {"url": "/all", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool"},
-    {"url": "/alltxt", "params": "type: '代理类型(单选)：http|https|socks4|socks4https|socks5|socks5https', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool by txt"},
+    {"url": "/all", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool"},
+    {"url": "/alltxt", "params": "type: '代理类型(单选 具体说明见github说明)：http|httptohttps|https|socks4|socks4tohttps|socks5|socks5tohttps', region: '代理地区(只支持中文)  e.g. 香港', anonymous: '匿名级别：0，1，2'", "desc": "get all proxy from proxy pool by txt"},
     {"url": "/count", "params": "", "desc": "return proxy count"}
     # 'refresh': 'refresh proxy pool',
 ]
@@ -184,7 +186,7 @@ def getCount():
 
     def format_rate(count, total):
         rate = (count / total * 100) if total else 0
-        return f"{count}/{total} 有效率：{rate:.2f}%"
+        return f"{count}/{total} 存活率：{rate:.2f}%"
 
     source_stats = {
         source: format_rate(count, proxy_count_data.get(source, 0))
