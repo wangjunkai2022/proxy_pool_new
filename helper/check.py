@@ -67,7 +67,7 @@ class DoValidator(object):
 
         # socks4tohttps 仅在 socks4 成功的前提下检查
         if results["socks4"]:
-            results["socksto4https"] = cls.socks4tohttpsValidator(proxy)
+            results["socks4tohttps"] = cls.socks4tohttpsValidator(proxy)
 
         # socks5tohttps 仅在 socks5 成功的前提下检查
         if results["socks5"]:
