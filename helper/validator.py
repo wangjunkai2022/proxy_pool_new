@@ -128,7 +128,6 @@ def httpsTimeOutValidator(proxy):
         r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
         return True if r.status_code == 200 else False
     except Exception as e:
-        print(f"httpsTimeOutValidator: {str(e)}")
         return False
 
 @ProxyValidator.addSocks4Validator
