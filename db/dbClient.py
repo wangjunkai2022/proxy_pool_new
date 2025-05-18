@@ -16,6 +16,7 @@ __author__ = 'JHao'
 
 import os
 import sys
+from datetime import datetime
 
 from util.six import urlparse, withMetaclass
 from util.singleton import Singleton
@@ -120,6 +121,7 @@ class DbClient(withMetaclass(Singleton)):
         return self.client.test()
 
     def putTotalProxyCount(self, proxyCount: dict):
+        proxyCount['fetch_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return self.client.putTotalProxyCount(proxyCount)
 
     def getProxyCount(self):
