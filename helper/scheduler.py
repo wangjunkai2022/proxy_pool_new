@@ -47,22 +47,23 @@ def __runProxyCheck():
 def runScheduler():
     __runProxyFetch()
 
-    timezone = ConfigHandler().timezone
     scheduler_log = LogHandler("scheduler")
-    scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
+    scheduler = BlockingScheduler(
+        executors={
+            'fetch_pool': {'type': 'threadpool', 'max_workers': 5},
+            'check_pool': {'type': 'threadpool', 'max_workers': 20},
+            'processpool': ProcessPoolExecutor(max_workers=5)
+        },
+        job_defaults={
+            'coalesce': False,
+            'max_instances': 10
+        },
+        timezone=ConfigHandler().timezone,
+        logger=scheduler_log
+    )
 
-    scheduler.add_job(__runProxyFetch, 'interval', minutes=ConfigHandler().fetchInterval, id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
-    executors = {
-        'default': {'type': 'threadpool', 'max_workers': 20},
-        'processpool': ProcessPoolExecutor(max_workers=5)
-    }
-    job_defaults = {
-        'coalesce': False,
-        'max_instances': 10
-    }
-
-    scheduler.configure(executors=executors, job_defaults=job_defaults, timezone=timezone)
+    scheduler.add_job(__runProxyFetch, 'interval', minutes=ConfigHandler().fetchInterval, executor='fetch_pool', id="proxy_fetch", name="proxy采集")
+    scheduler.add_job(__runProxyCheck, 'interval', minutes=5, misfire_grace_time=0, executor='check_pool', id="proxy_check", name="proxy检查")
 
     scheduler.start()
 
