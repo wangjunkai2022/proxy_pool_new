@@ -57,14 +57,14 @@ def schedule_fetch_job(scheduler, scheduler_log):
         __runProxyFetch()
 
         duration = time.time() - start_time
-        scheduler_log.info("[{}] Proxy fetch finished in {:.2f} seconds".format(datetime.now(), duration))
+        scheduler_log.info("[{}] Proxy fetch finished in {:.2f} minutes".format(datetime.now(), duration/60 if duration > 60 else 1))
 
         if duration < FETCH_INTERVAL:
             next_run = FETCH_INTERVAL - duration
         else:
             next_run = 1
 
-        scheduler_log.info("[{}] Scheduling next fetch in {:.2f} seconds".format(datetime.now(), next_run))
+        scheduler_log.info("[{}] Scheduling next fetch in {:.2f} minutes".format(datetime.now(), next_run/60 if next_run > 60 else 1))
         scheduler.add_job(fetch_job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
 
     scheduler.add_job(fetch_job, 'date', run_date=datetime.now() + timedelta(seconds=1), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
@@ -78,14 +78,14 @@ def schedule_check_job(scheduler, scheduler_log):
         __runProxyCheck()
 
         duration = time.time() - start_time
-        scheduler_log.info("[{}] Proxy check finished in {:.2f} seconds".format(datetime.now(), duration))
+        scheduler_log.info("[{}] Proxy check finished in {:.2f} minutes".format(datetime.now(), duration/60 if duration > 60 else 1))
 
         if duration < CHECK_INTERVAL:
             next_run = CHECK_INTERVAL - duration
         else:
             next_run = 1
 
-        scheduler_log.info("[{}] Scheduling next check in {:.2f} seconds".format(datetime.now(), next_run))
+        scheduler_log.info("[{}] Scheduling next check in {:.2f} minutes".format(datetime.now(), next_run/60 if next_run > 60 else 1))
         scheduler.add_job(check_job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
 
     # 延迟30分钟启动第一次任务
@@ -112,11 +112,6 @@ def runScheduler():
     schedule_check_job(scheduler, scheduler_log)
 
     scheduler.start()
-
-    for job in scheduler.get_jobs():
-        next_run = getattr(job, 'next_run_time', None)
-        scheduler_log.info("job: {} | next run time: {}".format(job.name, next_run or "N/A"))
-
 
 if __name__ == '__main__':
     runScheduler()
