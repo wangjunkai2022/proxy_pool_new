@@ -50,7 +50,7 @@ def __runProxyCheck():
 
 
 def schedule_fetch_job(scheduler, scheduler_log):
-    def job():
+    def fetch_job():
         start_time = time.time()
         scheduler_log.info("[{}] Starting proxy fetch...".format(datetime.now()))
 
@@ -65,15 +65,15 @@ def schedule_fetch_job(scheduler, scheduler_log):
             next_run = 1
 
         scheduler_log.info("[{}] Scheduling next fetch in {:.2f} seconds".format(datetime.now(), next_run))
-        scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
+        scheduler.add_job(fetch_job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
 
-    scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=1), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
+    scheduler.add_job(fetch_job, 'date', run_date=datetime.now() + timedelta(seconds=1), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
     scheduler_log.info("[{}] Proxy fetch scheduled to run in 1 seconds".format(datetime.now()))
 
 def schedule_check_job(scheduler, scheduler_log):
-    def job():
+    def check_job():
         start_time = time.time()
-        scheduler_log("[{}] Starting proxy check...".format(datetime.now()))
+        scheduler_log.info("[{}] Starting proxy check...".format(datetime.now()))
 
         __runProxyCheck()
 
@@ -86,11 +86,11 @@ def schedule_check_job(scheduler, scheduler_log):
             next_run = 1
 
         scheduler_log.info("[{}] Scheduling next check in {:.2f} seconds".format(datetime.now(), next_run))
-        scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
+        scheduler.add_job(check_job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
 
-    # 延迟60分钟启动第一次任务
-    scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=CHECK_INTERVAL), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
-    scheduler_log.info("[{}] Proxy check scheduled to run in 60 minutes".format(datetime.now()))
+    # 延迟30分钟启动第一次任务
+    scheduler.add_job(check_job, 'date', run_date=datetime.now() + timedelta(minutes=30), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
+    scheduler_log.info("[{}] Proxy check scheduled to run in 30 minutes".format(datetime.now()))
 
 def runScheduler():
     scheduler_log = LogHandler("scheduler")
