@@ -11,10 +11,9 @@
                    2021/02/23: runProxyCheck时,剩余代理少于POOL_SIZE_MIN时执行抓取
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = 'jinting'
 
 from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.executors.pool import ProcessPoolExecutor
 
 from util.six import Queue
 from helper.fetch import Fetcher
@@ -22,7 +21,13 @@ from helper.check import Checker
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
+import time
+from datetime import datetime, timedelta
 
+# proxy采集 最小时间间隔
+FETCH_INTERVAL = int(ConfigHandler().fetchInterval) * 60
+# proxy检查 最小时间间隔
+CHECK_INTERVAL = 60 * 60
 
 def __runProxyFetch():
     proxy_queue = Queue()
@@ -44,15 +49,55 @@ def __runProxyCheck():
     Checker("use", proxy_queue)
 
 
-def runScheduler():
-    __runProxyFetch()
+def schedule_fetch_job(scheduler, scheduler_log):
+    def job():
+        start_time = time.time()
+        scheduler_log.info("[{}] Starting proxy fetch...".format(datetime.now()))
 
+        __runProxyFetch()
+
+        duration = time.time() - start_time
+        scheduler_log.info("[{}] Proxy fetch finished in {:.2f} seconds".format(datetime.now(), duration))
+
+        if duration < FETCH_INTERVAL:
+            next_run = FETCH_INTERVAL - duration
+        else:
+            next_run = 1
+
+        scheduler_log.info("[{}] Scheduling next fetch in {:.2f} seconds".format(datetime.now(), next_run))
+        scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
+
+    scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=1), executor='fetch_pool', id="proxy_fetch", name="proxy采集", replace_existing=True)
+    scheduler_log.info("[{}] Proxy fetch scheduled to run in 1 seconds".format(datetime.now()))
+
+def schedule_check_job(scheduler, scheduler_log):
+    def job():
+        start_time = time.time()
+        scheduler_log("[{}] Starting proxy check...".format(datetime.now()))
+
+        __runProxyCheck()
+
+        duration = time.time() - start_time
+        scheduler_log.info("[{}] Proxy check finished in {:.2f} seconds".format(datetime.now(), duration))
+
+        if duration < CHECK_INTERVAL:
+            next_run = CHECK_INTERVAL - duration
+        else:
+            next_run = 1
+
+        scheduler_log.info("[{}] Scheduling next check in {:.2f} seconds".format(datetime.now(), next_run))
+        scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=next_run), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
+
+    # 延迟60分钟启动第一次任务
+    scheduler.add_job(job, 'date', run_date=datetime.now() + timedelta(seconds=CHECK_INTERVAL), executor='check_pool', id="proxy_check", name="proxy检查", replace_existing=True)
+    scheduler_log.info("[{}] Proxy check scheduled to run in 60 minutes".format(datetime.now()))
+
+def runScheduler():
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(
         executors={
-            'fetch_pool': {'type': 'threadpool', 'max_workers': 5},
-            'check_pool': {'type': 'threadpool', 'max_workers': 20},
-            'processpool': ProcessPoolExecutor(max_workers=5)
+            'fetch_pool': {'type': 'threadpool', 'max_workers': 20},
+            'check_pool': {'type': 'threadpool', 'max_workers': 10}
         },
         job_defaults={
             'coalesce': False,
@@ -62,10 +107,15 @@ def runScheduler():
         logger=scheduler_log
     )
 
-    scheduler.add_job(__runProxyFetch, 'interval', minutes=ConfigHandler().fetchInterval, executor='fetch_pool', id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(__runProxyCheck, 'interval', minutes=5, misfire_grace_time=0, executor='check_pool', id="proxy_check", name="proxy检查")
+    # 启动调度器任务
+    schedule_fetch_job(scheduler, scheduler_log)
+    schedule_check_job(scheduler, scheduler_log)
 
     scheduler.start()
+
+    for job in scheduler.get_jobs():
+        next_run = getattr(job, 'next_run_time', None)
+        scheduler_log.info("job: {} | next run time: {}".format(job.name, next_run or "N/A"))
 
 
 if __name__ == '__main__':

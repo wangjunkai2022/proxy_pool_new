@@ -31,6 +31,7 @@ ProxyPool 爬虫代理IP池 优化增强
 &emsp;&emsp;14、将docker内项目根目录挂载到宿主机  
 &emsp;&emsp;15、count方法修改，新增爬取全部代理数和存活率  
 &emsp;&emsp;16、引入quickjs模块，使其支持js运算  
+&emsp;&emsp;17、重构proxy采集/检查的定时任务逻辑    
 
 ```
 结果示例
