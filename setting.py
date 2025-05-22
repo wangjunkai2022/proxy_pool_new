@@ -63,9 +63,6 @@ FETCH_INTERVAL = 480
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
 MAX_FAIL_COUNT = 3
 
-# 近PROXY_CHECK_COUNT次校验中允许的最大失败率,超过则剔除代理
-# MAX_FAIL_RATE = 0.1
-
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
 POOL_SIZE_MIN = 100
 

@@ -82,15 +82,14 @@ class DoValidator(object):
         proxy.check_count += 1
         proxy.last_time = now
         proxy.last_status = any(results.values())
-        proxy.proxy_type = [ptype for ptype, valid in results.items() if valid]
-
-        # 匿名性检测
-        if results["http"] or results["https"]:
-            proxy.anonymous = await cls.anonymousValidator(proxy.proxy, results["https"])
 
         # 成功或失败计数更新
         if proxy.last_status:
+            proxy.proxy_type = [ptype for ptype, valid in results.items() if valid]
             proxy.fail_count = max(proxy.fail_count - 1, 0)
+            # 匿名性检测
+            if results["http"] or results["https"]:
+                proxy.anonymous = await cls.anonymousValidator(proxy.proxy, results["https"])
             if work_type == "raw" and cls.conf.proxyRegion:
                 proxy.region = await cls.region_get(proxy.proxy)
         else:
