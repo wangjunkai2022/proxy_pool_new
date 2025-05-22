@@ -108,7 +108,7 @@ def create_socks_connector(proxy, proxy_type, useSsl=False):
     try:
         host, port = proxy.split(':')
         if  useSsl:
-            return ProxyConnector(proxy_type=proxy_type, host=host, port=int(port), proxy_ssl=ssl.create_default_context())
+            return ProxyConnector(proxy_type=proxy_type, host=host, port=int(port), proxy_ssl=ssl.create_default_context(), ssl=False)
         else:
             return ProxyConnector(proxy_type=proxy_type, host=host, port=int(port))
     except Exception as e:
