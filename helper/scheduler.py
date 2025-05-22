@@ -17,7 +17,6 @@ import asyncio
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from util.six import Queue
 from helper.fetch import Fetcher
 from helper.check import Checker
 from handler.logHandler import LogHandler
@@ -29,7 +28,7 @@ from datetime import datetime, timedelta
 # proxy采集 最小时间间隔
 FETCH_INTERVAL = int(ConfigHandler().fetchInterval) * 60
 # proxy检查 最小时间间隔
-CHECK_INTERVAL = 60 * 60
+CHECK_INTERVAL = 120 * 60
 
 async def __runProxyFetch():
     proxy_queue = asyncio.Queue()

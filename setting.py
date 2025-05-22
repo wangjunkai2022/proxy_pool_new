@@ -51,8 +51,7 @@ HTTPS_URL = "https://httpbin.org/ip"
 # 抓取代理时使用的代理是否使用代理
 USE_PROXY = True
 # 抓取代理时使用的代理
-PROXIES = {'http': "http://127.0.0.1:7897",
-           'https': "http://127.0.0.1:7897"}
+PROXIES = {'http': "http://127.0.0.1:7897", 'https': "http://127.0.0.1:7897"}
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10

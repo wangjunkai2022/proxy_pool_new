@@ -103,7 +103,7 @@ def formatValidator(proxy):
 
 
 # 新增代理连接器创建函数
-def create_socks_connector(proxy, proxy_type, useSsl=False):
+def create_proxy_connector(proxy, proxy_type, useSsl=False):
     """创建代理连接器"""
     try:
         host, port = proxy.split(':')
@@ -119,7 +119,7 @@ def create_socks_connector(proxy, proxy_type, useSsl=False):
 @ProxyValidator.addHttpValidator
 async def httpTimeOutValidator(proxy):
     """http检测超时 http代理连接http网站"""
-    connector = create_socks_connector(proxy, ProxyType.HTTP)
+    connector = create_proxy_connector(proxy, ProxyType.HTTP)
     if not connector:
         return False
     async with aiohttp.ClientSession(connector=connector, timeout=SESSION_TIMEOUT) as session:
@@ -133,13 +133,13 @@ async def httpTimeOutValidator(proxy):
 @ProxyValidator.addHttptohttpsValidator
 async def httptohttpsTimeOutValidator(proxy):
     """https检测超时  http代理连接https网站"""
-    connector = create_socks_connector(proxy, ProxyType.HTTP)
+    connector = create_proxy_connector(proxy, ProxyType.HTTP)
     if not connector:
         return False
 
     async with aiohttp.ClientSession(connector=connector, timeout=SESSION_TIMEOUT) as session:
         try:
-            async with session.head(conf.httpsUrl, headers=HEADER, timeout=conf.verifyTimeout) as resp:
+            async with session.head(conf.httpsUrl, headers=HEADER, ssl= False, timeout=conf.verifyTimeout) as resp:
                 return resp.status == 200
         except:
             return False
@@ -148,7 +148,7 @@ async def httptohttpsTimeOutValidator(proxy):
 @ProxyValidator.addHttpsValidator
 async def httpsTimeOutValidator(proxy):
     """https检测超时  https代理连接https网站"""
-    connector = create_socks_connector(proxy, ProxyType.HTTP, True)
+    connector = create_proxy_connector(proxy, ProxyType.HTTP, True)
     if not connector:
         return False
 
@@ -163,7 +163,7 @@ async def httpsTimeOutValidator(proxy):
 @ProxyValidator.addSocks4Validator
 async def socks4TimeOutValidator(proxy):
     """socks4检测超时 socks4代理连接http网站"""
-    connector = create_socks_connector(proxy, ProxyType.SOCKS4)
+    connector = create_proxy_connector(proxy, ProxyType.SOCKS4)
     if not connector:
         return False
 
@@ -178,7 +178,7 @@ async def socks4TimeOutValidator(proxy):
 @ProxyValidator.addSocks4tohttpsValidator
 async def socks4tohttpsTimeOutValidator(proxy):
     """socks4检测超时 socks4代理连接https网站"""
-    connector = create_socks_connector(proxy, ProxyType.SOCKS4)
+    connector = create_proxy_connector(proxy, ProxyType.SOCKS4)
     if not connector:
         return False
 
@@ -192,7 +192,7 @@ async def socks4tohttpsTimeOutValidator(proxy):
 @ProxyValidator.addSocks5Validator
 async def socks5TimeOutValidator(proxy):
     """socks5检测超时 socks5代理连接http网站"""
-    connector = create_socks_connector(proxy, ProxyType.SOCKS5)
+    connector = create_proxy_connector(proxy, ProxyType.SOCKS5)
     if not connector:
         return False
 
@@ -207,7 +207,7 @@ async def socks5TimeOutValidator(proxy):
 @ProxyValidator.addSocks5tohttpsValidator
 async def socks5tohttpsTimeOutValidator(proxy):
     """socks5检测超时  socks5代理连接https网站"""
-    connector = create_socks_connector(proxy, ProxyType.SOCKS5)
+    connector = create_proxy_connector(proxy, ProxyType.SOCKS5)
     if not connector:
         return False
 
