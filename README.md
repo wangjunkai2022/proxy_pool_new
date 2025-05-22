@@ -32,6 +32,7 @@ ProxyPool 爬虫代理IP池 优化增强
 &emsp;&emsp;15、count方法修改，新增爬取全部代理数和存活率  
 &emsp;&emsp;16、引入quickjs模块，使其支持js运算  
 &emsp;&emsp;17、重构proxy采集/检查的定时任务逻辑    
+&emsp;&emsp;18、使用异步工作协程和aiohttp重构proxy检测逻辑，大幅度提高检测速度    
 
 ```
 结果示例

@@ -7,3 +7,5 @@ click
 Flask
 werkzeug
 quickjs
+aiohttp
+aiohttp_socks

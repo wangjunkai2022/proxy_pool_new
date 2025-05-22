@@ -13,6 +13,8 @@
 """
 __author__ = 'jinting'
 
+import asyncio
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from util.six import Queue
@@ -29,24 +31,24 @@ FETCH_INTERVAL = int(ConfigHandler().fetchInterval) * 60
 # proxy检查 最小时间间隔
 CHECK_INTERVAL = 60 * 60
 
-def __runProxyFetch():
-    proxy_queue = Queue()
+async def __runProxyFetch():
+    proxy_queue = asyncio.Queue()
     proxy_fetcher = Fetcher()
 
     for proxy in proxy_fetcher.run():
-        proxy_queue.put(proxy)
+        await proxy_queue.put(proxy)
 
-    Checker("raw", proxy_queue)
+    await Checker("raw", proxy_queue)
 
 
-def __runProxyCheck():
+async def __runProxyCheck():
     proxy_handler = ProxyHandler()
-    proxy_queue = Queue()
+    proxy_queue = asyncio.Queue()
     if proxy_handler.db.getCount().get("total", 0) < proxy_handler.conf.poolSizeMin:
-        __runProxyFetch()
+        await __runProxyFetch()
     for proxy in proxy_handler.getAll():
-        proxy_queue.put(proxy)
-    Checker("use", proxy_queue)
+        await proxy_queue.put(proxy)
+    await Checker("use", proxy_queue)
 
 
 def schedule_fetch_job(scheduler, scheduler_log):
@@ -54,7 +56,7 @@ def schedule_fetch_job(scheduler, scheduler_log):
         start_time = time.time()
         scheduler_log.info("[{}] Starting proxy fetch...".format(datetime.now()))
 
-        __runProxyFetch()
+        asyncio.run(__runProxyFetch())
 
         duration = time.time() - start_time
         scheduler_log.info("[{}] Proxy fetch finished in {:.2f} minutes".format(datetime.now(), duration/60 if duration > 60 else 1))
@@ -75,7 +77,7 @@ def schedule_check_job(scheduler, scheduler_log):
         start_time = time.time()
         scheduler_log.info("[{}] Starting proxy check...".format(datetime.now()))
 
-        __runProxyCheck()
+        asyncio.run(__runProxyCheck())
 
         duration = time.time() - start_time
         scheduler_log.info("[{}] Proxy check finished in {:.2f} minutes".format(datetime.now(), duration/60 if duration > 60 else 1))
