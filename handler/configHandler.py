@@ -106,6 +106,10 @@ class ConfigHandler(withMetaclass(Singleton)):
     def fetchInterval(self):
         return os.getenv("FETCH_INTERVAL", setting.FETCH_INTERVAL)
 
+    @LazyProperty
+    def workersNumber(self):
+        return os.getenv("WORKERS_NUMBER", setting.WORKERS_NUMBER)
+
 if __name__ == '__main__':
     config = ConfigHandler()
     print(config.fetchers)

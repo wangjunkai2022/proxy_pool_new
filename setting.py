@@ -53,6 +53,9 @@ USE_PROXY = True
 # 抓取代理时使用的代理
 PROXIES = {'http': "http://127.0.0.1:7897", 'https': "http://127.0.0.1:7897"}
 
+# 代理验证时的工作协程数量
+WORKERS_NUMBER = 100
+
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10
 

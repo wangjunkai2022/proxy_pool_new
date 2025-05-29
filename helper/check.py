@@ -272,7 +272,8 @@ async def Checker(tp: str, queue: asyncio.Queue):
     :param tp: raw/use
     :param queue: 代理队列
     """
-    max_workers = 100
+    conf = ConfigHandler()
+    max_workers = conf.workersNumber
 
     log = LogHandler("checker")
     log.info(f"Starting {max_workers} async workers for {tp} proxy check")
