@@ -21,10 +21,6 @@
 __author__ = 'jinting'
 
 import json
-import os
-
-from util.six import Empty
-from threading import Thread
 from datetime import datetime
 from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
@@ -195,21 +191,17 @@ class DoValidator(object):
         scheme = 'https' if https else 'http'
         url = f'{scheme}://httpbin.org/ip'
         proxy = f'{scheme}://{proxy_addr}'
-
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, proxy=proxy, timeout=timeout) as resp:
                     if not resp.status == 200:
                         return -1
-
                     data = await resp.json()
                     origin = data.get('origin', '')
                     headers = dict((k.lower(), v) for k, v in resp.headers.items())
-
                     # 判断真实IP是否泄露
                     if ',' in origin:
                         return 0  # 透明代理
-
                     # 判断是否存在代理标识头
                     proxy_headers = ['via', 'proxy-connection', 'x-forwarded-for', 'forwarded']
                     if any(h in headers for h in proxy_headers):
@@ -217,6 +209,7 @@ class DoValidator(object):
 
                     return 2  # 高匿代理
         except Exception as e:
+            print(f"anonymousValidator Error: {str(e)}")
             return -1
 
 

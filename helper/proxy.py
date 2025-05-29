@@ -17,7 +17,7 @@ import json
 
 class Proxy(object):
 
-    def __init__(self, proxy, proxy_type="", fail_count=0, region="", anonymous="",
+    def __init__(self, proxy, proxy_type="", fail_count=0, region="", anonymous="非HTTP代理",
                  source="", check_count=0, last_status="", last_time=""):
         self._proxy = proxy
         self._proxy_type = proxy_type
@@ -42,7 +42,7 @@ class Proxy(object):
                    proxy_type=_dict.get("proxy_type", ""),
                    fail_count=_dict.get("fail_count", 0),
                    region=_dict.get("region", ""),
-                   anonymous=_dict.get("anonymous", ""),
+                   anonymous=_dict.get("anonymous", "非HTTP代理"),
                    source=_dict.get("source", ""),
                    check_count=_dict.get("check_count", 0),
                    last_status=_dict.get("last_status", ""),
