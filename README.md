@@ -112,18 +112,18 @@ HOST = "0.0.0.0"               # IP
 PORT = 5000                    # 监听端口
 # 配置数据库
 
-DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
+# 修改pwd
+DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
 
 # 抓取代理时使用的代理是否使用代理
 USE_PROXY = True
 # 抓取代理时使用的代理
-PROXIES = {'http': "http://127.0.0.1:7897",
-           'https': "http://127.0.0.1:7897"}
+PROXIES = {'http': "http://127.0.0.1:7897", 'https': "http://127.0.0.1:7897"}
 
 # 是否将日志输出到文件
-INPUT_LOG_FILE = False
+INPUT_LOG_FILE = True
 # 日志文件保存日期
-LOG_FILE_SAVE_DATE = 5
+LOG_FILE_SAVE_DATE = 1
 ```
 
 #### 启动项目:
