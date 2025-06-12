@@ -9,3 +9,4 @@ werkzeug
 quickjs
 aiohttp
 aiohttp_socks
+tzdata

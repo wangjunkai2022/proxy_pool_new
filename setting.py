@@ -44,12 +44,12 @@ TABLE_NAME = 'use_proxy'
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://httpbin.org/ip"
+HTTP_URL = "https://inapp.mypikpak.com/ping"
 
-HTTPS_URL = "https://httpbin.org/ip"
+HTTPS_URL = "https://inapp.mypikpak.com/ping"
 
 # 抓取代理时使用的代理是否使用代理
-USE_PROXY = True
+USE_PROXY = False
 # 抓取代理时使用的代理
 PROXIES = {'http': "http://127.0.0.1:7897", 'https': "http://127.0.0.1:7897"}
 
